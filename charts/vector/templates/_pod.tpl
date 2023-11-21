@@ -89,29 +89,14 @@ containers:
 {{- else if .Values.customConfig }}
     {{- include "vector.containerPorts" . | indent 6 }}
 {{- else if or (eq .Values.role "Aggregator") (eq .Values.role "Stateless-Aggregator") }}
-      - name: datadog-agent
-        containerPort: 8282
-        protocol: TCP
-      - name: fluent
-        containerPort: 24224
-        protocol: TCP
-      - name: logstash
-        containerPort: 5044
-        protocol: TCP
-      - name: splunk-hec
-        containerPort: 8080
-        protocol: TCP
-      - name: statsd
-        containerPort: 8125
-        protocol: TCP
-      - name: syslog
-        containerPort: 9000
+      - name: api
+        containerPort: 8686
         protocol: TCP
       - name: vector
         containerPort: 6000
         protocol: TCP
-      - name: prom-exporter
-        containerPort: 9090
+      - name: http
+        containerPort: 6001
         protocol: TCP
 {{- else if (eq .Values.role "Agent") }}
       - name: prom-exporter
@@ -135,14 +120,17 @@ containers:
 {{- toYaml . | nindent 6 }}
 {{- end }}
     volumeMounts:
+      - name: {{ .Values.vectorConfig.voulumeMounts.name }}
+        mountPath: {{ .Values.vectorConfig.voulumeMounts.mountPath }}
+        readOnly: true
       - name: data
         {{- if .Values.existingConfigMaps }}
         mountPath: "{{ if .Values.dataDir }}{{ .Values.dataDir }}{{ else }}{{ fail "Specify `dataDir` if you're using `existingConfigMaps`" }}{{ end }}"
         {{- else }}
         mountPath: "{{ .Values.customConfig.data_dir | default "/vector-data-dir" }}"
         {{- end }}
-      - name: config
-        mountPath: "/etc/vector/"
+      - name: global-config
+        mountPath: "/etc/vector/global"
         readOnly: true
 {{- if (eq .Values.role "Agent") }}
 {{- with .Values.defaultVolumeMounts }}
@@ -173,6 +161,8 @@ topologySpreadConstraints:
 {{- toYaml . | nindent 2 }}
 {{- end }}
 volumes:
+  - name: {{ .Values.vectorConfig.voulumeMounts.name }}
+    emptyDir: {}
 {{- if and .Values.persistence.enabled (eq .Values.role "Aggregator") }}
 {{- with .Values.persistence.existingClaim }}
   - name: data
@@ -183,7 +173,7 @@ volumes:
   - name: data
     emptyDir: {}
 {{- end }}
-  - name: config
+  - name: global-config
     projected:
       sources:
 {{- if .Values.existingConfigMaps }}

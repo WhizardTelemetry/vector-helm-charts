@@ -3,6 +3,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: {{ include "vector.fullname" . }}
+  namespace: {{ include "vector.namespaceOverride" . }}
   labels:
     {{- with .Values.podMonitor.additionalLabels }}
     {{- toYaml . | nindent 4 }}

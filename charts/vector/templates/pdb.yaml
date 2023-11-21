@@ -3,6 +3,7 @@ apiVersion: {{ template "policy.poddisruptionbudget.apiVersion" . }}
 kind: PodDisruptionBudget
 metadata:
   name: {{ template "vector.fullname" . }}
+  namespace: {{ template "vector.namespaceOverride" . }}
   labels:
     {{- include "vector.labels" . | nindent 4 }}
 spec:

@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: {{ include "vector.fullname" . }}-post-install
+  namespace: {{ include "vector.namespaceOverride" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "vector.fullname" . }}-post-install
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+rules:
+  - apiGroups:
+      - 'apps'
+      - ''
+    resources:
+      - '*'
+    verbs:
+      - '*'
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ include "vector.fullname" . }}-post-install
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "3"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "vector.fullname" . }}-post-install
+    namespace: {{ include "vector.namespaceOverride" . }}
+roleRef:
+  kind: ClusterRole
+  name: {{ include "vector.fullname" . }}-post-install
+  apiGroup: rbac.authorization.k8s.io
+
+---
+{{- if .Values.namespaceOverride }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "vector.fullname" . }}-pre-install
+  annotations:
+    helm.sh/hook: pre-install
+    helm.sh/hook-weight: "1"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pre-install-job
+          image: {{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              if kubectl get namespace {{ include "vector.namespaceOverride" . }} &>/dev/null; then
+                echo "Namespace $NS already exists. Skipping..."
+              else
+                kubectl create namespace {{ include "vector.namespaceOverride" . }};
+              fi
+{{- end }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "vector.fullname" . }}-post-install
+  namespace: {{ include "vector.namespaceOverride" . }}
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "4"
+    "helm.sh/hook-delete-policy": hook-succeeded,before-hook-creation
+spec:
+  backoffLimit: {{ .Values.hook.postInstall.backoffLimit }}
+  template:
+    metadata:
+      name: {{ include "vector.fullname" . }}-post-install
+    spec:
+      restartPolicy: Never
+      serviceAccountName: {{ include "vector.fullname" . }}-post-install
+      containers:
+        - name: post-install-job
+          image: {{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}
+          imagePullPolicy: {{ .Values.hook.postInstall.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cat > /tmp/patch.yaml <<EOF
+              spec:
+                template:
+                  spec:
+                    containers:
+                      - name: vector-config
+                        image: {{ .Values.vectorConfig.image.repo }}:{{ .Values.vectorConfig.image.tag }}
+                        args:
+                          - '--role={{ .Values.role }}'
+                          - '--namespace={{  include "vector.namespaceOverride" . }}'
+                          - '--fileDir={{ .Values.vectorConfig.voulumeMounts.mountPath }}'
+                        volumeMounts:
+                          - name: {{ .Values.vectorConfig.voulumeMounts.name }}
+                            mountPath: {{ .Values.vectorConfig.voulumeMounts.mountPath }}
+                            readOnly: {{ .Values.vectorConfig.voulumeMounts.readOnly }}
+              EOF
+              {{- if (eq .Values.role "Agent") }}
+              kubectl patch  daemonset {{  include "vector.fullname" . }} -n {{ include "vector.namespaceOverride" . }} --patch-file /tmp/patch.yaml
+              {{- else }}
+              kubectl patch  statefulset {{  include "vector.fullname" . }} -n {{ include "vector.namespaceOverride" . }}  --patch-file /tmp/patch.yaml
+              {{- end }}
