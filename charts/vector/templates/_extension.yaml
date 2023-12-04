@@ -1,0 +1,30 @@
+{{/*namespace*/}}
+{{- define "vector.namespaceOverride" -}}
+  {{- if .Values.namespaceOverride -}}
+    {{- .Values.namespaceOverride -}}
+  {{- else -}}
+    {{- .Release.Namespace -}}
+  {{- end -}}
+{{- end -}}
+
+
+
+{{/*service-headless ports*/}}
+{{- define "vector.ports.filterNodePort" -}}
+{{- range $port := .Values.service.ports }}
+- name: {{ $port.name }}
+  port: {{ $port.port }}
+  protocol: {{ $port.protocol }}
+  targetPort: {{ $port.targetPort }}
+{{- end }}
+{{- end -}}
+
+{{/*
+Common labels.
+*/}}
+{{- define "vector.config.labels" -}}
+  {{- if eq .Values.role "Aggregator" }}
+logging.whizard.io/role: Aggregator
+logging.whizard.io/enable: "true"
+  {{- end }}
+{{- end }}
