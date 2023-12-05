@@ -28,7 +28,7 @@ data:
       timeout connect 5s
 
     resolvers coredns
-      nameserver dns1 kube-dns.kube-system.svc.cluster.local:53
+      nameserver dns1 coredns.kube-system.svc.cluster.local:53
       resolve_retries 3
       timeout resolve 2s
       timeout retry 1s
