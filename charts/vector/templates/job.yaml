@@ -67,6 +67,7 @@ spec:
                 echo "Namespace $NS already exists. Skipping..."
               else
                 kubectl create namespace {{ include "vector.namespaceOverride" . }};
+                kubectl label namespace {{ include "vector.namespaceOverride" . }} "kubesphere.io/workspace=system-workspace";
               fi
 {{- end }}
 ---
