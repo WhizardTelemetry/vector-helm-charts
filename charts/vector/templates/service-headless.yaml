@@ -30,7 +30,7 @@ spec:
 {{- end }}
   ports:
 {{- if or .Values.service.ports .Values.existingConfigMaps }}
-  {{- toYaml .Values.service.ports | nindent 4 }}
+  {{- include "vector.ports.filterNodePort" . | indent 4 }}
 {{- else if .Values.customConfig }}
   {{- include "vector.ports" . | indent 4 }}
 {{- else }}

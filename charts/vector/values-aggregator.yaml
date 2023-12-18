@@ -6,7 +6,7 @@ namespaceOverride: ""
 nameOverride: ""
 
 # fullnameOverride -- Override the full name of resources.
-fullnameOverride: ""
+fullnameOverride: "vector-aggregator"
 
 # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
 # "Agent", "Aggregator", and "Stateless-Aggregator".
@@ -226,7 +226,7 @@ service:
   # service.enabled -- If true, create and provide a Service resource for Vector.
   enabled: true
   # service.type -- Set the type for Vector's Service.
-  type: "ClusterIP"
+  type: "NodePort"
   # service.annotations -- Set annotations on Vector's Service.
   annotations: {}
   # service.topologyKeys -- Specify the [topologyKeys](https://kubernetes.io/docs/concepts/services-networking/service-topology/#using-service-topology)
@@ -237,7 +237,12 @@ service:
   #   - "topology.kubernetes.io/region"
   #   - "*"
   # service.ports -- Manually set the Service ports, overriding automated generation of Service ports.
-  ports: []
+  ports:
+  - name: http
+    protocol: TCP
+    port: 6001
+    targetPort: 6001
+    nodePort: 32601
   # service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
   externalTrafficPolicy: ""
   # service.internalTrafficPolicy -- Specify the [internalTrafficPolicy]https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy).
@@ -456,7 +461,7 @@ logLevel: "info"
 # Optional built-in HAProxy load balancer.
 haproxy:
   # haproxy.enabled -- If true, create a HAProxy load balancer.
-  enabled: true
+  enabled: false
 
   # Define the HAProxy image to use.
   image:

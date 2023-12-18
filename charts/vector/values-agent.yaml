@@ -6,7 +6,7 @@ namespaceOverride: ""
 nameOverride: ""
 
 # fullnameOverride -- Override the full name of resources.
-fullnameOverride: ""
+fullnameOverride: "vector-agent"
 
 # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
 # "Agent", "Aggregator", and "Stateless-Aggregator".
@@ -649,3 +649,12 @@ vectorConfig:
     name: custom-config
     mountPath: /etc/vector/custom
     readOnly: false
+sinks:
+  opensearch:
+    auth:
+      strategy: basic
+      user: admin
+      password: admin
+    type: elasticsearch
+    apiVersion: v8
+    endpoints: []

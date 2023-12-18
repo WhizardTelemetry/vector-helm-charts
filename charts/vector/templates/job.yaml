@@ -41,34 +41,6 @@ roleRef:
   kind: ClusterRole
   name: {{ include "vector.fullname" . }}-post-install
   apiGroup: rbac.authorization.k8s.io
-
----
-{{- if .Values.namespaceOverride }}
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: {{ include "vector.fullname" . }}-pre-install
-  annotations:
-    helm.sh/hook: pre-install
-    helm.sh/hook-weight: "1"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
-spec:
-  template:
-    spec:
-      restartPolicy: Never
-      containers:
-        - name: pre-install-job
-          image: {{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}
-          command:
-            - /bin/sh
-            - -c
-            - |
-              if kubectl get namespace {{ include "vector.namespaceOverride" . }} &>/dev/null; then
-                echo "Namespace $NS already exists. Skipping..."
-              else
-                kubectl create namespace {{ include "vector.namespaceOverride" . }};
-              fi
-{{- end }}
 ---
 apiVersion: batch/v1
 kind: Job
