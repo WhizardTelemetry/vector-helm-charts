@@ -1,4 +1,5 @@
-{{- if .Values.opensearch.endpoints }}
+{{- if eq .Values.role "Agent" }}
+{{- if .Values.sinks.opensearch.endpoints }}
 apiVersion: v1
 kind: Secret
 metadata:
@@ -8,4 +9,5 @@ stringData:
   opensearch: >-
     {{- toYaml .Values.sinks.opensearch | nindent 4 }}
 type: Opaque
+{{- end }}
 {{- end }}
