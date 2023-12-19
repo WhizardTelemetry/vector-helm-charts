@@ -643,18 +643,11 @@ hook:
 vectorConfig:
   image:
     repo: kubesphere/vector-config
-    tag: v0.1.0
+    tag: v0.2.0
     pullPolicy: IfNotPresent
   voulumeMounts:
     name: custom-config
     mountPath: /etc/vector/custom
     readOnly: false
 sinks:
-  opensearch:
-    auth:
-      strategy: basic
-      user: admin
-      password: admin
-    type: elasticsearch
-    apiVersion: v8
-    endpoints: []
+  opensearch: {}
