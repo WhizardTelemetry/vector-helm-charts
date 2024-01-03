@@ -24,7 +24,7 @@ Common labels.
 */}}
 {{- define "vector.config.labels" -}}
   {{- if eq .Values.role "Aggregator" }}
-logging.whizard.io/role: Aggregator
+logging.whizard.io/vector-role: Aggregator
 logging.whizard.io/enable: "true"
   {{- end }}
 {{- end }}

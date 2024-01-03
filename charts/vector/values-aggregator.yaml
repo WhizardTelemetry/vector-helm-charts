@@ -243,6 +243,11 @@ service:
     port: 6001
     targetPort: 6001
     nodePort: 32601
+  - name: api
+    protocol: TCP
+    port: 8686
+    targetPort: 8686
+    nodePort: 32686
   # service.externalTrafficPolicy -- Specify the [externalTrafficPolicy](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#preserving-the-client-source-ip).
   externalTrafficPolicy: ""
   # service.internalTrafficPolicy -- Specify the [internalTrafficPolicy]https://kubernetes.io/docs/concepts/services-networking/service-traffic-policy).
@@ -656,7 +661,7 @@ hook:
 vectorConfig:
   image:
     repo: kubesphere/vector-config
-    tag: v0.1.0
+    tag: v0.2.0
     pullPolicy: IfNotPresent
   voulumeMounts:
     name: custom-config

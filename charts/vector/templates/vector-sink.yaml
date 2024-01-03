@@ -6,7 +6,7 @@ metadata:
   name: vector-sinks
   namespace: {{ include "vector.namespaceOverride" . }}
 stringData:
-  opensearch: >-
+  opensearch: |
     {{- toYaml .Values.sinks.opensearch | nindent 4 }}
 type: Opaque
 {{- end }}
