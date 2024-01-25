@@ -38,9 +38,9 @@ containers:
 {{ toYaml . | indent 6 }}
 {{- end }}
 {{- if .Values.image.sha }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}@sha256:{{ .Values.image.sha }}"
+    image: "{{- include "global.imageRegistry" . }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}@sha256:{{ .Values.image.sha }}"
 {{- else }}
-    image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+    image: "{{- include "global.imageRegistry" . }}{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
 {{- end }}
     imagePullPolicy: {{ .Values.image.pullPolicy }}
 {{- with .Values.command }}
@@ -144,10 +144,7 @@ containers:
 {{ toYaml . | indent 2 }}
 {{- end }}
 terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
-{{- with .Values.nodeSelector }}
-nodeSelector:
-{{ toYaml . | indent 2 }}
-{{- end }}
+{{- include "common.nodeSelectors" . }}
 {{- with .Values.affinity }}
 affinity:
 {{ toYaml . | indent 2 }}
