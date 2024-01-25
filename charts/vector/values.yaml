@@ -8,6 +8,10 @@ nameOverride: ""
 # fullnameOverride -- Override the full name of resources.
 fullnameOverride: ""
 
+global:
+  imageRegistry: ""
+  nodeSelector: {}
+
 # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
 # "Agent", "Aggregator", and "Stateless-Aggregator".
 
@@ -643,7 +647,7 @@ hook:
 vectorConfig:
   image:
     repo: kubesphere/vector-config
-    tag: v0.1.0
+    tag: v0.2.0
     pullPolicy: IfNotPresent
   voulumeMounts:
     name: custom-config

@@ -61,7 +61,7 @@ spec:
       serviceAccountName: {{ include "vector.fullname" . }}-post-install
       containers:
         - name: post-install-job
-          image: {{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}
+          image: {{ include "global.imageRegistry" . }}{{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}
           imagePullPolicy: {{ .Values.hook.postInstall.image.pullPolicy }}
           command:
             - /bin/sh
@@ -73,7 +73,7 @@ spec:
                   spec:
                     containers:
                       - name: vector-config
-                        image: {{ .Values.vectorConfig.image.repo }}:{{ .Values.vectorConfig.image.tag }}
+                        image: {{ include "global.imageRegistry" . }}{{ .Values.vectorConfig.image.repo }}:{{ .Values.vectorConfig.image.tag }}
                         args:
                           - '--role={{ .Values.role }}'
                           - '--namespace={{  include "vector.namespaceOverride" . }}'

@@ -28,3 +28,24 @@ logging.whizard.io/vector-role: Aggregator
 logging.whizard.io/enable: "true"
   {{- end }}
 {{- end }}
+
+
+{{- define "global.imageRegistry" -}}
+  {{- if .Values.global.imageRegistry -}}
+    {{- printf "%s/" .Values.global.imageRegistry -}}
+  {{- end -}}
+{{- end -}}
+
+
+{{- define "common.nodeSelectors" -}}
+{{- if eq .Values.role "Aggregator" }}
+{{- $selector := default .Values.global.nodeSelector .Values.nodeSelector }}
+{{- if $selector }}
+nodeSelector:
+{{ toYaml $selector | indent 2 }}
+{{- end }}
+{{- else if and  (eq .Values.role "Agent") .Values.nodeSelector }}
+nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 2 }}
+{{- end }}
+{{- end -}}

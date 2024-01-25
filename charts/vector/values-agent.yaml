@@ -8,6 +8,10 @@ nameOverride: ""
 # fullnameOverride -- Override the full name of resources.
 fullnameOverride: "vector-agent"
 
+global:
+  imageRegistry: ""
+  nodeSelector: {}
+
 # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
 # "Agent", "Aggregator", and "Stateless-Aggregator".
 
