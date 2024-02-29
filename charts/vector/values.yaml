@@ -645,6 +645,13 @@ hook:
       pullPolicy: IfNotPresent
     backoffLimit: 1
 vectorConfig:
+  resources:
+    requests:
+      cpu: 5m
+      memory: 10Mi
+    limits:
+      cpu: 50m
+      memory: 50Mi
   image:
     repo: kubesphere/vector-config
     tag: v0.2.0
