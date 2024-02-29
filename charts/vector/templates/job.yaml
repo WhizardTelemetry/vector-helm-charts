@@ -82,6 +82,13 @@ spec:
                           - name: {{ .Values.vectorConfig.voulumeMounts.name }}
                             mountPath: {{ .Values.vectorConfig.voulumeMounts.mountPath }}
                             readOnly: {{ .Values.vectorConfig.voulumeMounts.readOnly }}
+                        resources:
+                          requests:
+                            cpu: {{ .Values.vectorConfig.resources.requests.cpu }}
+                            memory: {{ .Values.vectorConfig.resources.requests.memory }}
+                          limits:
+                            cpu: {{ .Values.vectorConfig.resources.limits.cpu }}
+                            memory: {{ .Values.vectorConfig.resources.limits.memory }}
               EOF
               {{- if (eq .Values.role "Agent") }}
               kubectl patch  daemonset {{  include "vector.fullname" . }} -n {{ include "vector.namespaceOverride" . }} --patch-file /tmp/patch.yaml
