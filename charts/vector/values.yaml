@@ -7,7 +7,7 @@ nameOverride: ""
 
 # fullnameOverride -- Override the full name of resources.
 fullnameOverride: ""
-
+imageRegistryOverride: ""
 global:
   imageRegistry: ""
   nodeSelector: {}
