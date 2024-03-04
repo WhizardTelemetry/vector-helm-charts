@@ -59,6 +59,10 @@ spec:
     spec:
       restartPolicy: Never
       serviceAccountName: {{ include "vector.fullname" . }}-post-install
+      {{- with .Values.global.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: post-install-job
           image: {{ include "global.imageRegistry" . }}{{ .Values.hook.postInstall.image.repo }}:{{ .Values.hook.postInstall.image.tag }}

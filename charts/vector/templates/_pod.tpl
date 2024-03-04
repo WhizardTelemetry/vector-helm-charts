@@ -2,6 +2,10 @@
 Defines the PodSpec for Vector.
 */}}
 {{- define "vector.pod" -}}
+{{- with .Values.global.imagePullSecrets }}
+imagePullSecrets:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
 serviceAccountName: {{ include "vector.serviceAccountName" . }}
 {{- with .Values.podHostNetwork }}
 hostNetwork: {{ . }}
