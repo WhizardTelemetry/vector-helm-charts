@@ -11,6 +11,7 @@ imageRegistryOverride: ""
 global:
   imageRegistry: ""
   nodeSelector: {}
+  imagePullSecrets: []
 
 # role -- [Role](https://vector.dev/docs/setup/deployment/roles/) for this Vector instance, valid options are:
 # "Agent", "Aggregator", and "Stateless-Aggregator".
