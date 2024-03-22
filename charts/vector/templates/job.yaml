@@ -79,7 +79,7 @@ spec:
                       - name: vector-config
                         image: {{ include "global.imageRegistry" . }}{{ .Values.vectorConfig.image.repo }}:{{ .Values.vectorConfig.image.tag }}
                         args:
-                          - '--role={{ .Values.role }}'
+                          - '--role={{ include "config.role" . }}'
                           - '--namespace={{  include "vector.namespaceOverride" . }}'
                           - '--fileDir={{ .Values.vectorConfig.voulumeMounts.mountPath }}'
                         volumeMounts:
@@ -96,6 +96,11 @@ spec:
               EOF
               {{- if (eq .Values.role "Agent") }}
               kubectl patch  daemonset {{  include "vector.fullname" . }} -n {{ include "vector.namespaceOverride" . }} --patch-file /tmp/patch.yaml
-              {{- else }}
+              {{- else if eq .Values.role "Aggregator" }}
               kubectl patch  statefulset {{  include "vector.fullname" . }} -n {{ include "vector.namespaceOverride" . }}  --patch-file /tmp/patch.yaml
+              {{- else if eq .Values.role "Stateless-Aggregator" }}
+              kubectl patch deployment {{  include "vector.fullname" . }} -n {{ include "vector.namespaceOverride" . }}  --patch-file /tmp/patch.yaml
+              {{- else }}
+              echo "Unknown role."
+              exit 1
               {{- end }}
