@@ -56,6 +56,8 @@ containers:
     {{- toYaml . | nindent 6 }}
 {{- end }}
     env:
+      - name: VECTOR_LOG
+        value: "{{ .Values.logLevel | default "info" }}"
 {{- if .Values.env }}
 {{- with .Values.env }}
     {{- toYaml . | nindent 6 }}
@@ -78,8 +80,6 @@ containers:
         value: "/host/proc"
       - name: SYSFS_ROOT
         value: "/host/sys"
-      - name: VECTOR_LOG
-        value: "{{ .Values.logLevel | default "info" }}"
 {{- end }}
 {{- if .Values.envFrom }}
 {{- with .Values.envFrom }}
