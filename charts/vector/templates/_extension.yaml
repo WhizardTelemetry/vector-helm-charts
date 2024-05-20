@@ -27,6 +27,10 @@ Common labels.
 logging.whizard.io/vector-role: Aggregator
 logging.whizard.io/enable: "true"
   {{- end }}
+  {{- if eq .Values.role "Agent" }}
+logging.whizard.io/vector-role: Agent
+logging.whizard.io/enable: "true"
+  {{- end }}
 {{- end }}
 
 

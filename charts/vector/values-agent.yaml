@@ -5,6 +5,19 @@ namespaceOverride: ""
 # nameOverride -- Override the name of resources.
 nameOverride: ""
 
+exportMetrics:
+  enabled: false
+  sources:
+    vector_metrics:
+      type: internal_metrics
+      scrape_interval_secs: 60
+  sinks:
+    prometheus:
+      type: prometheus_remote_write
+      inputs:
+        - vector_metrics
+      endpoint: http://prometheus-k8s.kubesphere-monitoring-system:9090/api/v1/write
+
 # fullnameOverride -- Override the full name of resources.
 fullnameOverride: "vector-agent"
 imageRegistryOverride: ""
