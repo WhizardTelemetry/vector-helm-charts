@@ -10,6 +10,7 @@ exportMetrics:
   sources:
     vector_metrics:
       type: internal_metrics
+      namespace: vector-aggregator
       scrape_interval_secs: 60
   sinks:
     prometheus:
